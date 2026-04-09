@@ -1,37 +1,20 @@
+import { getWasmModule } from './wasmAdapter';
 
+/**
+ * Linear Search Algorithm — Generator-based step visualization
+ * Now uses C++ WebAssembly backend to compute steps
+ */
 export function* linearSearch(array, target) {
-  for (let i = 0; i < array.length; i++) {
-    yield {
-      type: 'visit',
-      index: i,
-      indices: { current: i },
-      explanation: `Checking element at index ${i} (value: ${array[i]})`,
-    };
-
-    if (array[i] === target) {
-      yield {
-        type: 'found',
-        index: i,
-        indices: { current: i },
-        explanation: `✅ Found target ${target} at index ${i}!`,
-      };
-      return;
-    }
-
-    yield {
-      type: 'compare',
-      index: i,
-      indices: { current: i },
-      explanation: `${array[i]} ≠ ${target}, moving to next element`,
-    };
+  const Module = getWasmModule();
+  
+  // Convert JS array to typed array for WASM (just a quick mapping, though embind handles JS arrays natively!)
+  // Since we used emscripten::val, we can just pass the JS array directly!
+  const steps = Module.runLinearSearch(array, target);
+  
+  // Yield each step computed by C++
+  for (let i = 0; i < steps.length; i++) {
+    yield steps[i];
   }
-
-  yield {
-    type: 'not_found',
-    index: -1,
-    indices: {},
-    explanation: `❌ Target ${target} not found in the array`,
-  };
 }
 
 export const linearSearchInfo = {

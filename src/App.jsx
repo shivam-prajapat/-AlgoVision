@@ -17,6 +17,7 @@ import {
   generateRandomGrid,
   getDefaultPositions,
 } from './utils/gridUtils';
+import { initWasm } from './algorithms/wasmAdapter';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,11 @@ export default function App() {
   const [placingMode, setPlacingMode] = useState(null); // 'start' | 'end' | 'wall'
 
   const viz = useVisualization();
+
+  // Initialize WASM
+  useEffect(() => {
+    initWasm().catch(err => console.error("Failed to load WASM modules", err));
+  }, []);
 
   // Apply dark/light class to document
   useEffect(() => {
