@@ -73,22 +73,28 @@ export function useVisualization() {
   const runLoop = useCallback(() => {
     if (!generatorRef.current) return;
 
-    const next = generatorRef.current.next();
-    if (next.done) {
+    try {
+      const next = generatorRef.current.next();
+      if (next.done) {
+        setIsRunning(false);
+        setIsComplete(true);
+        return;
+      }
+
+      processStep(next.value);
+
+      if (next.value.type === 'found' || next.value.type === 'not_found') {
+        setIsRunning(false);
+        return;
+      }
+
+      if (!isPausedRef.current) {
+        timeoutRef.current = setTimeout(runLoop, speedRef.current);
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Runtime Error in Generator: " + e.message);
       setIsRunning(false);
-      setIsComplete(true);
-      return;
-    }
-
-    processStep(next.value);
-
-    if (next.value.type === 'found' || next.value.type === 'not_found') {
-      setIsRunning(false);
-      return;
-    }
-
-    if (!isPausedRef.current) {
-      timeoutRef.current = setTimeout(runLoop, speedRef.current);
     }
   }, [processStep]);
 

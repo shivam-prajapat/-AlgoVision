@@ -122,22 +122,27 @@ export default function App() {
   const handleStart = useCallback(() => {
     let generator;
 
-    if (selectedAlgorithm === 'linear') {
-      const t = parseInt(target) || arrayData[Math.floor(Math.random() * arrayData.length)];
-      setTarget(String(t));
-      generator = linearSearch(arrayData, t);
-    } else if (selectedAlgorithm === 'binary') {
-      const t = parseInt(target) || arrayData[Math.floor(Math.random() * arrayData.length)];
-      setTarget(String(t));
-      generator = binarySearch(arrayData, t);
-    } else if (selectedAlgorithm === 'dfs') {
-      generator = dfs(gridData, startPos, endPos);
-    } else if (selectedAlgorithm === 'bfs') {
-      generator = bfs(gridData, startPos, endPos);
-    }
+    try {
+      if (selectedAlgorithm === 'linear') {
+        const t = parseInt(target) || arrayData[Math.floor(Math.random() * arrayData.length)];
+        setTarget(String(t));
+        generator = linearSearch(arrayData, t);
+      } else if (selectedAlgorithm === 'binary') {
+        const t = parseInt(target) || arrayData[Math.floor(Math.random() * arrayData.length)];
+        setTarget(String(t));
+        generator = binarySearch(arrayData, t);
+      } else if (selectedAlgorithm === 'dfs') {
+        generator = dfs(gridData, startPos, endPos);
+      } else if (selectedAlgorithm === 'bfs') {
+        generator = bfs(gridData, startPos, endPos);
+      }
 
-    if (generator) {
-      viz.start(generator);
+      if (generator) {
+        viz.start(generator);
+      }
+    } catch (e) {
+      alert("Generator Error: " + e.message);
+      console.error(e);
     }
   }, [selectedAlgorithm, arrayData, gridData, target, startPos, endPos, viz]);
 

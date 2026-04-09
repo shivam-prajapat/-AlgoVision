@@ -8,15 +8,15 @@ if (Test-Path ".\emsdk\emsdk_env.ps1") {
 }
 
 # Create output directory
-if (-Not (Test-Path ".\public\wasm")) {
-    New-Item -ItemType Directory -Force -Path ".\public\wasm" | Out-Null
+if (-Not (Test-Path ".\src\wasm")) {
+    New-Item -ItemType Directory -Force -Path ".\src\wasm" | Out-Null
 }
 
 Write-Host "Compiling src/algorithms/cpp/algorithms.cpp to WebAssembly..."
 
 # Run emcc with embind
 emcc .\src\algorithms\cpp\algorithms.cpp `
-    -o .\public\wasm\algorithms.js `
+    -o .\src\wasm\algorithms.js `
     -O3 `
     -s WASM=1 `
     -s EXPORT_ES6=1 `
@@ -25,4 +25,4 @@ emcc .\src\algorithms\cpp\algorithms.cpp `
     -s ALLOW_MEMORY_GROWTH=1 `
     -lembind
 
-Write-Host "✅ WebAssembly compilation successful! Output placed in public/wasm/"
+Write-Host "✅ WebAssembly compilation successful! Output placed in src/wasm/"

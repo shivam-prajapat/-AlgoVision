@@ -7,8 +7,8 @@ export async function initWasm() {
   
   initPromise = new Promise(async (resolve, reject) => {
     try {
-      // WebAssembly output from public folder
-      const { default: initFn } = await import('/wasm/algorithms.js');
+      // WebAssembly output from src/wasm
+      const { default: initFn } = await import('../wasm/algorithms.js');
       const instance = await initFn();
       wasmModule = instance;
       resolve(instance);
