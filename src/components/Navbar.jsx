@@ -49,7 +49,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
           </span>
         </motion.a>
 
-        {/* Desktop Nav Links */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <motion.a
@@ -68,9 +67,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
           ))}
         </div>
 
-        {/* Right Side */}
         <div className="flex items-center gap-3">
-          {/* Dark/Light Toggle */}
           <motion.button
             onClick={() => setDarkMode(!darkMode)}
             className="w-9 h-9 rounded-lg flex items-center justify-center text-lg cursor-pointer border-0"
@@ -97,7 +94,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
             </motion.span>
           </motion.button>
 
-          {/* GitHub Link */}
           <motion.a
             href="https://github.com"
             target="_blank"
@@ -120,7 +116,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
             </svg>
           </motion.a>
 
-          {/* Mobile Menu Button */}
           <motion.button
             className="md:hidden w-9 h-9 rounded-lg flex flex-col items-center justify-center gap-1 cursor-pointer border-0"
             style={{
@@ -150,7 +145,6 @@ export default function Navbar({ darkMode, setDarkMode }) {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
