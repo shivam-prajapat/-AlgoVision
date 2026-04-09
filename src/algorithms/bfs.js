@@ -1,7 +1,4 @@
-/**
- * Breadth First Search — Generator-based step visualization on a 2D grid
- * Explores all neighbors at current depth before moving deeper
- */
+
 export function* bfs(grid, start, end) {
   const rows = grid.length;
   const cols = grid[0].length;
@@ -10,10 +7,10 @@ export function* bfs(grid, start, end) {
   const queue = [start];
   visited[start[0]][start[1]] = true;
   const directions = [
-    [-1, 0], // up
-    [0, 1],  // right
-    [1, 0],  // down
-    [0, -1], // left
+    [-1, 0], 
+    [0, 1], 
+    [1, 0],  
+    [0, -1],
   ];
 
   yield {
@@ -33,17 +30,13 @@ export function* bfs(grid, start, end) {
       explanation: `Visiting node (${row}, ${col}). Queue size: ${queue.length}`,
     };
 
-    // Check if we found the target
     if (row === end[0] && col === end[1]) {
-      // Reconstruct path
       const path = [];
       let current = [row, col];
       while (current) {
         path.unshift(current);
         current = parent[current[0]][current[1]];
       }
-
-      // Yield path animation
       for (let i = 0; i < path.length; i++) {
         yield {
           type: 'path',
@@ -63,7 +56,6 @@ export function* bfs(grid, start, end) {
       return;
     }
 
-    // Explore neighbors
     for (const [dr, dc] of directions) {
       const newRow = row + dr;
       const newCol = col + dc;
