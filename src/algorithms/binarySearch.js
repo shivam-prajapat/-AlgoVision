@@ -1,7 +1,4 @@
-/**
- * Binary Search Algorithm — Generator-based step visualization
- * Efficiently searches sorted arrays by halving the search space
- */
+
 export function* binarySearch(array, target) {
   let low = 0;
   let high = array.length - 1;
@@ -19,7 +16,6 @@ export function* binarySearch(array, target) {
     const mid = Math.floor((low + high) / 2);
     step++;
 
-    // Highlight the current search range
     yield {
       type: 'range',
       index: mid,
@@ -28,7 +24,6 @@ export function* binarySearch(array, target) {
       explanation: `Step ${step}: Search range [${low}...${high}], mid index = ${mid} (value: ${array[mid]})`,
     };
 
-    // Visit mid element
     yield {
       type: 'visit',
       index: mid,
