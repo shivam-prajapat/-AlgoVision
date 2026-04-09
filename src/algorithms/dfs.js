@@ -1,7 +1,4 @@
-/**
- * Depth First Search — Generator-based step visualization on a 2D grid
- * Explores as far as possible along each branch before backtracking
- */
+
 export function* dfs(grid, start, end) {
   const rows = grid.length;
   const cols = grid[0].length;
@@ -9,10 +6,10 @@ export function* dfs(grid, start, end) {
   const parent = Array.from({ length: rows }, () => Array(cols).fill(null));
   const stack = [start];
   const directions = [
-    [-1, 0], // up
-    [0, 1],  // right
-    [1, 0],  // down
-    [0, -1], // left
+    [-1, 0],
+    [0, 1],  
+    [1, 0], 
+    [0, -1], 
   ];
 
   yield {
@@ -37,9 +34,7 @@ export function* dfs(grid, start, end) {
       explanation: `Visiting node (${row}, ${col}). Stack size: ${stack.length}`,
     };
 
-    // Check if we found the target
     if (row === end[0] && col === end[1]) {
-      // Reconstruct path
       const path = [];
       let current = [row, col];
       while (current) {
@@ -47,7 +42,6 @@ export function* dfs(grid, start, end) {
         current = parent[current[0]][current[1]];
       }
 
-      // Yield path animation
       for (let i = 0; i < path.length; i++) {
         yield {
           type: 'path',
@@ -67,7 +61,6 @@ export function* dfs(grid, start, end) {
       return;
     }
 
-    // Explore neighbors (reversed so that the first direction is processed first from stack)
     for (let i = directions.length - 1; i >= 0; i--) {
       const [dr, dc] = directions[i];
       const newRow = row + dr;
