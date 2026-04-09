@@ -1,20 +1,16 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
 
-/**
- * Node component — represents a single array cell or grid node
- * Visual state changes based on algorithm progress
- */
 const Node = memo(function Node({
   value,
   index,
   row,
   col,
-  state = 'unvisited', // unvisited | visiting | visited | found | path | wall | start | end | range | enqueue
+  state = 'unvisited', 
   isCurrentIndex = false,
   showValue = true,
   size = 'md',
-  type = 'array', // array | graph
+  type = 'array', 
   onClick,
   pointerLabel,
 }) {
@@ -98,7 +94,7 @@ const Node = memo(function Node({
 
   return (
     <div className="relative flex flex-col items-center">
-      {/* Pointer label (for binary search low/mid/high) */}
+      {}
       {pointerLabel && (
         <motion.div
           className="absolute -top-5 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded whitespace-nowrap z-10"
@@ -133,7 +129,6 @@ const Node = memo(function Node({
             : `Index: ${index}, Value: ${value}`
         }
       >
-        {/* Shimmer effect for visiting */}
         {state === 'visiting' && (
           <motion.div
             className="absolute inset-0 opacity-30"
@@ -145,7 +140,6 @@ const Node = memo(function Node({
           />
         )}
 
-        {/* Content */}
         {type === 'graph' ? (
           state === 'wall' ? (
             <span className="text-[8px]">■</span>
@@ -159,7 +153,6 @@ const Node = memo(function Node({
         ) : null}
       </motion.div>
 
-      {/* Index label for array type */}
       {type === 'array' && (
         <span
           className="mt-1 text-[9px] font-mono"
