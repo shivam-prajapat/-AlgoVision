@@ -8,7 +8,6 @@ import { binarySearchInfo } from './binarySearch';
 import { dfsInfo } from './dfs';
 import { bfsInfo } from './bfs';
 
-// Algorithm registry for easy iteration
 export const algorithmList = [
   { id: 'linear', ...linearSearchInfo },
   { id: 'binary', ...binarySearchInfo },
