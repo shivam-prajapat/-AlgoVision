@@ -1,10 +1,6 @@
-/**
- * Linear Search Algorithm — Generator-based step visualization
- * Searches through array elements one by one from left to right
- */
+
 export function* linearSearch(array, target) {
   for (let i = 0; i < array.length; i++) {
-    // Visit the current element
     yield {
       type: 'visit',
       index: i,
@@ -12,7 +8,6 @@ export function* linearSearch(array, target) {
       explanation: `Checking element at index ${i} (value: ${array[i]})`,
     };
 
-    // Compare with target
     if (array[i] === target) {
       yield {
         type: 'found',
