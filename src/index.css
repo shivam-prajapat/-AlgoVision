@@ -38,7 +38,6 @@ body {
   min-height: 100vh;
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -57,7 +56,6 @@ body {
   background: var(--color-neon-blue);
 }
 
-/* Glassmorphism utility */
 .glass {
   background: var(--color-glass);
   backdrop-filter: blur(12px);
@@ -72,7 +70,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Neon glow effects */
 .glow-blue {
   box-shadow: 0 0 15px rgba(0, 212, 255, 0.3), 0 0 30px rgba(0, 212, 255, 0.1);
 }
@@ -89,7 +86,6 @@ body {
   box-shadow: 0 0 15px rgba(255, 0, 110, 0.3), 0 0 30px rgba(255, 0, 110, 0.1);
 }
 
-/* Neon text glow */
 .text-glow-blue {
   text-shadow: 0 0 10px rgba(0, 212, 255, 0.5), 0 0 20px rgba(0, 212, 255, 0.3);
 }
@@ -102,7 +98,6 @@ body {
   text-shadow: 0 0 10px rgba(0, 255, 136, 0.5), 0 0 20px rgba(0, 255, 136, 0.3);
 }
 
-/* Animated gradient background */
 .gradient-bg {
   background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0a0a0f 100%);
   background-size: 400% 400%;
@@ -115,7 +110,6 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Pulse animation for active nodes */
 @keyframes neonPulse {
   0%, 100% { 
     box-shadow: 0 0 5px rgba(0, 212, 255, 0.4), 0 0 10px rgba(0, 212, 255, 0.2);
@@ -131,7 +125,6 @@ body {
   animation: neonPulse 1.5s ease-in-out infinite;
 }
 
-/* Scan line effect */
 @keyframes scanLine {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100vh); }
@@ -151,7 +144,6 @@ body {
   z-index: 100;
 }
 
-/* Grid pattern background */
 .grid-pattern {
   background-image: 
     linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
@@ -159,13 +151,11 @@ body {
   background-size: 40px 40px;
 }
 
-/* Selection styling */
 ::selection {
   background: rgba(0, 212, 255, 0.3);
   color: #fff;
 }
 
-/* Light theme overrides */
 .light body,
 .light {
   --color-bg-dark: #f0f4f8;
