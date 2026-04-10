@@ -1,9 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
 
-/**
- * Custom hook to manage algorithm visualization state and playback
- * Consumes generator steps at a controlled speed
- */
 export function useVisualization() {
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
