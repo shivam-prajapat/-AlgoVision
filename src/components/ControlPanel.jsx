@@ -117,10 +117,8 @@ export default function ControlPanel({
           </motion.button>
         </div>
 
-        {/* Divider */}
         <div className="hidden lg:block w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
-        {/* Speed Control */}
         <div className="flex items-center gap-3">
           <span className="text-[11px] font-medium" style={{ color: '#64748b' }}>
             Speed
@@ -150,12 +148,9 @@ export default function ControlPanel({
           </span>
         </div>
 
-        {/* Divider */}
         <div className="hidden lg:block w-px h-8" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
-        {/* Data Controls */}
         <div className="flex items-center gap-3">
-          {/* Target Input — only for array algos */}
           {!isGraphAlgo && (
             <div className="flex items-center gap-2">
               <label className="text-[11px] font-medium" style={{ color: '#64748b' }}>
@@ -177,7 +172,6 @@ export default function ControlPanel({
             </div>
           )}
 
-          {/* Size Control */}
           {!isGraphAlgo && (
             <div className="flex items-center gap-2">
               <label className="text-[11px] font-medium" style={{ color: '#64748b' }}>
@@ -202,7 +196,6 @@ export default function ControlPanel({
             </div>
           )}
 
-          {/* Generate Data */}
           <motion.button
             onClick={onGenerateData}
             disabled={isRunning}
