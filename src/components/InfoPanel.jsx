@@ -62,10 +62,8 @@ export default function InfoPanel({
         </p>
       </div>
 
-      {/* Divider */}
       <div className="h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
 
-      {/* Complexity Info */}
       <div>
         <h4
           className="text-[10px] font-semibold tracking-[0.15em] uppercase mb-2"
@@ -99,10 +97,8 @@ export default function InfoPanel({
         </div>
       </div>
 
-      {/* Divider */}
       <div className="h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
 
-      {/* Status */}
       <div>
         <h4
           className="text-[10px] font-semibold tracking-[0.15em] uppercase mb-2"
@@ -128,7 +124,6 @@ export default function InfoPanel({
           </span>
         </div>
 
-        {/* Step Counter */}
         <div
           className="p-2 rounded-lg mb-2"
           style={{ background: 'rgba(255,255,255,0.03)' }}
@@ -142,10 +137,8 @@ export default function InfoPanel({
         </div>
       </div>
 
-      {/* Divider */}
       <div className="h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
 
-      {/* Live Explanation */}
       <div className="flex-1">
         <h4
           className="text-[10px] font-semibold tracking-[0.15em] uppercase mb-2"
@@ -173,7 +166,6 @@ export default function InfoPanel({
         </AnimatePresence>
       </div>
 
-      {/* Keyboard Shortcuts */}
       <div className="mt-auto">
         <div className="h-px mb-3" style={{ background: 'rgba(255,255,255,0.06)' }} />
         <h4
