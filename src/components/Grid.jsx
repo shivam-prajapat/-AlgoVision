@@ -2,9 +2,6 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import Node from './Node';
 
-/**
- * Grid component — renders array or graph visualization
- */
 export default function Grid({
   algorithm,
   arrayData,
@@ -21,7 +18,6 @@ export default function Grid({
 }) {
   const isGraphAlgo = algorithm === 'dfs' || algorithm === 'bfs';
 
-  // Determine node size based on data
   const nodeSize = useMemo(() => {
     if (isGraphAlgo) {
       const cols = gridData?.[0]?.length || 0;
@@ -35,7 +31,6 @@ export default function Grid({
     return 'lg';
   }, [isGraphAlgo, arrayData?.length, gridData]);
 
-  // Get state for array node
   const getArrayNodeState = (index) => {
     if (isComplete && currentStep?.type === 'not_found') return 'notfound';
     if (foundIndex === index) return 'found';
@@ -49,7 +44,6 @@ export default function Grid({
     return 'unvisited';
   };
 
-  // Get pointer labels for binary search
   const getPointerLabel = (index) => {
     if (algorithm !== 'binary' || !currentStep?.indices) return null;
     const { low, high, mid } = currentStep.indices;
@@ -59,7 +53,6 @@ export default function Grid({
     return null;
   };
 
-  // Get state for graph node
   const getGraphNodeState = (row, col) => {
     const key = `${row}-${col}`;
     if (gridData[row][col] === 1) return 'wall';
@@ -107,7 +100,6 @@ export default function Grid({
     );
   }
 
-  // Array visualization
   if (arrayData) {
     return (
       <motion.div
@@ -116,7 +108,6 @@ export default function Grid({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Array bars visualization */}
         <div className="flex items-end justify-center gap-1 w-full min-h-[200px] px-4">
           {arrayData.map((value, index) => {
             const state = getArrayNodeState(index);
@@ -138,7 +129,6 @@ export default function Grid({
                 className="flex flex-col items-center gap-1 flex-1"
                 style={{ maxWidth: 40 }}
               >
-                {/* Pointer label */}
                 {getPointerLabel(index) && (
                   <motion.span
                     className="text-[9px] font-mono font-bold px-1 py-0.5 rounded mb-1"
@@ -153,7 +143,6 @@ export default function Grid({
                   </motion.span>
                 )}
 
-                {/* Bar */}
                 <motion.div
                   className="w-full rounded-t-md relative cursor-pointer"
                   style={{
@@ -172,7 +161,6 @@ export default function Grid({
                   title={`Index: ${index}, Value: ${value}`}
                 />
 
-                {/* Value */}
                 <span
                   className="text-[10px] font-mono font-medium"
                   style={{
@@ -182,7 +170,6 @@ export default function Grid({
                   {value}
                 </span>
 
-                {/* Index */}
                 <span className="text-[8px] font-mono" style={{ color: '#374151' }}>
                   {index}
                 </span>
@@ -190,8 +177,6 @@ export default function Grid({
             );
           })}
         </div>
-
-        {/* Array cells row */}
         <div className="flex items-center justify-center gap-1 flex-wrap">
           {arrayData.map((value, index) => (
             <Node
@@ -209,7 +194,6 @@ export default function Grid({
     );
   }
 
-  // Empty state
   return (
     <motion.div
       className="flex items-center justify-center h-full"
