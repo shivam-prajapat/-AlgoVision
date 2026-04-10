@@ -30,21 +30,18 @@ export default function App() {
   const [target, setTarget] = useState('');
   const [dataSize, setDataSize] = useState(20);
   const [speed, setSpeedState] = useState(500);
-  const [placingMode, setPlacingMode] = useState(null); // 'start' | 'end' | 'wall'
+  const [placingMode, setPlacingMode] = useState(null); 
 
   const viz = useVisualization();
 
-  // Initialize WASM
   useEffect(() => {
     initWasm().catch(err => console.error("Failed to load WASM modules", err));
   }, []);
 
-  // Apply dark/light class to document
   useEffect(() => {
     document.documentElement.classList.toggle('light', !darkMode);
   }, [darkMode]);
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.target.tagName === 'INPUT') return;
@@ -78,7 +75,6 @@ export default function App() {
 
   const isGraphAlgo = selectedAlgorithm === 'dfs' || selectedAlgorithm === 'bfs';
 
-  // Generate new data
   const handleGenerateData = useCallback(() => {
     viz.reset();
     if (selectedAlgorithm === 'binary') {
@@ -97,13 +93,11 @@ export default function App() {
     setTarget('');
   }, [selectedAlgorithm, dataSize, viz]);
 
-  // Handle algorithm selection
   const handleSelectAlgorithm = useCallback((algoId) => {
     if (viz.isRunning) return;
     viz.reset();
     setSelectedAlgorithm(algoId);
 
-    // Generate appropriate data
     if (algoId === 'binary') {
       setArrayData(generateSortedArray(dataSize));
     } else if (algoId === 'linear') {
@@ -118,7 +112,6 @@ export default function App() {
     setTarget('');
   }, [viz.isRunning, dataSize, viz]);
 
-  // Start visualization
   const handleStart = useCallback(() => {
     let generator;
 
@@ -146,10 +139,8 @@ export default function App() {
     }
   }, [selectedAlgorithm, arrayData, gridData, target, startPos, endPos, viz]);
 
-  // Step through
   const handleStep = useCallback(() => {
     if (!viz.isRunning && !viz.isComplete) {
-      // Start silently and immediately pause, then step
       let generator;
       if (selectedAlgorithm === 'linear') {
         const t = parseInt(target) || arrayData[Math.floor(Math.random() * arrayData.length)];
@@ -166,7 +157,6 @@ export default function App() {
       }
       if (generator) {
         viz.start(generator);
-        // Pause immediately and do one step
         setTimeout(() => {
           viz.pause();
           viz.step();
@@ -177,36 +167,30 @@ export default function App() {
     }
   }, [selectedAlgorithm, arrayData, gridData, target, startPos, endPos, viz]);
 
-  // Reset
   const handleReset = useCallback(() => {
     viz.reset();
   }, [viz]);
 
-  // Speed change
   const handleSpeedChange = useCallback((ms) => {
     setSpeedState(ms);
     viz.setSpeed(ms);
   }, [viz]);
 
-  // Grid cell click (for placing walls, start, end)
   const handleCellClick = useCallback((row, col) => {
     if (viz.isRunning) return;
 
     setGridData((prev) => {
       const newGrid = prev.map((r) => [...r]);
 
-      // If clicking on start position
       if (row === startPos[0] && col === startPos[1]) return prev;
-      // If clicking on end position
+    
       if (row === endPos[0] && col === endPos[1]) return prev;
 
-      // Toggle wall
       newGrid[row][col] = newGrid[row][col] === 1 ? 0 : 1;
       return newGrid;
     });
   }, [viz.isRunning, startPos, endPos]);
 
-  // Size change
   const handleSizeChange = useCallback((size) => {
     setDataSize(size);
     viz.reset();
@@ -220,16 +204,13 @@ export default function App() {
 
   return (
     <>
-      {/* Loading Screen */}
       <AnimatePresence>
         {loading && <LoadingScreen onComplete={() => setLoading(false)} />}
       </AnimatePresence>
 
-      {/* Main App */}
       <div className={`min-h-screen gradient-bg grid-pattern ${darkMode ? '' : 'light'}`}>
         <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
 
-        {/* Main Layout */}
         <div className="pt-20 pb-4 px-3 md:px-4 lg:px-6 max-w-[1920px] mx-auto h-screen flex flex-col">
           <div className="flex-1 flex gap-3 md:gap-4 min-h-0">
             {/* Sidebar */}
@@ -241,9 +222,7 @@ export default function App() {
               />
             </div>
 
-            {/* Center Content */}
             <div className="flex-1 flex flex-col gap-3 md:gap-4 min-w-0">
-              {/* Mobile Algorithm Selector */}
               <div className="md:hidden">
                 <select
                   value={selectedAlgorithm}
@@ -263,7 +242,6 @@ export default function App() {
                 </select>
               </div>
 
-              {/* Visualization Area */}
               <motion.div
                 className="flex-1 glass rounded-2xl overflow-auto flex items-center justify-center min-h-0"
                 initial={{ y: 20, opacity: 0 }}
@@ -302,7 +280,6 @@ export default function App() {
                 )}
               </motion.div>
 
-              {/* Graph Instructions */}
               {isGraphAlgo && !viz.isRunning && !viz.isComplete && (
                 <motion.div
                   className="text-center text-xs py-1"
@@ -314,7 +291,6 @@ export default function App() {
                 </motion.div>
               )}
 
-              {/* Control Panel */}
               <ControlPanel
                 onStart={handleStart}
                 onPause={viz.pause}
@@ -335,7 +311,6 @@ export default function App() {
               />
             </div>
 
-            {/* Info Panel */}
             <div className="hidden lg:block w-56 xl:w-64 flex-shrink-0">
               <InfoPanel
                 algorithm={selectedAlgorithm}
