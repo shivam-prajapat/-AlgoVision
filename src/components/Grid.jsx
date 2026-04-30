@@ -1,211 +1,1 @@
-import { useMemo } from 'react';
-import { motion } from 'framer-motion';
-import Node from './Node';
-
-export default function Grid({
-  algorithm,
-  arrayData,
-  gridData,
-  visitedIndices,
-  visitedCells,
-  pathCells,
-  foundIndex,
-  currentStep,
-  isComplete,
-  startPos,
-  endPos,
-  onCellClick,
-}) {
-  const isGraphAlgo = algorithm === 'dfs' || algorithm === 'bfs';
-
-  const nodeSize = useMemo(() => {
-    if (isGraphAlgo) {
-      const cols = gridData?.[0]?.length || 0;
-      if (cols > 35) return 'xs';
-      if (cols > 25) return 'sm';
-      return 'md';
-    }
-    const len = arrayData?.length || 0;
-    if (len > 30) return 'sm';
-    if (len > 20) return 'md';
-    return 'lg';
-  }, [isGraphAlgo, arrayData?.length, gridData]);
-
-  const getArrayNodeState = (index) => {
-    if (isComplete && currentStep?.type === 'not_found') return 'notfound';
-    if (foundIndex === index) return 'found';
-    if (currentStep?.index === index && !isComplete) return 'visiting';
-    if (currentStep?.type === 'range' && currentStep?.range) {
-      const [low, high] = currentStep.range;
-      if (index >= low && index <= high && visitedIndices.has(index)) return 'visited';
-      if (index >= low && index <= high) return 'range';
-    }
-    if (visitedIndices.has(index)) return 'visited';
-    return 'unvisited';
-  };
-
-  const getPointerLabel = (index) => {
-    if (algorithm !== 'binary' || !currentStep?.indices) return null;
-    const { low, high, mid } = currentStep.indices;
-    if (index === mid) return 'mid';
-    if (index === low) return 'low';
-    if (index === high) return 'high';
-    return null;
-  };
-
-  const getGraphNodeState = (row, col) => {
-    const key = `${row}-${col}`;
-    if (gridData[row][col] === 1) return 'wall';
-    if (row === startPos?.[0] && col === startPos?.[1]) {
-      if (pathCells.has(key)) return 'path';
-      if (visitedCells.has(key)) return 'visited';
-      return 'start';
-    }
-    if (row === endPos?.[0] && col === endPos?.[1]) {
-      if (foundIndex === key) return 'found';
-      return 'end';
-    }
-    if (pathCells.has(key)) return 'path';
-    if (foundIndex === key) return 'found';
-    if (currentStep?.row === row && currentStep?.col === col && currentStep?.type === 'visit') return 'visiting';
-    if (visitedCells.has(key)) return 'visited';
-    return 'unvisited';
-  };
-
-  if (isGraphAlgo && gridData) {
-    return (
-      <motion.div
-        className="flex flex-col items-center gap-0.5 p-4"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-      >
-        {gridData.map((row, rowIdx) => (
-          <div key={rowIdx} className="flex gap-0.5">
-            {row.map((_, colIdx) => (
-              <Node
-                key={`${rowIdx}-${colIdx}`}
-                row={rowIdx}
-                col={colIdx}
-                state={getGraphNodeState(rowIdx, colIdx)}
-                type="graph"
-                size={nodeSize}
-                showValue={false}
-                onClick={() => onCellClick?.(rowIdx, colIdx)}
-              />
-            ))}
-          </div>
-        ))}
-      </motion.div>
-    );
-  }
-
-  if (arrayData) {
-    return (
-      <motion.div
-        className="flex flex-col items-center gap-6 p-4 w-full"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-      >
-        <div className="flex items-end justify-center gap-1 w-full min-h-[200px] px-4">
-          {arrayData.map((value, index) => {
-            const state = getArrayNodeState(index);
-            const maxVal = Math.max(...arrayData);
-            const heightPercent = (value / maxVal) * 100;
-
-            const barColors = {
-              unvisited: 'rgba(100, 116, 139, 0.4)',
-              visiting: '#00d4ff',
-              visited: '#a855f7',
-              found: '#00ff88',
-              range: 'rgba(255, 215, 0, 0.4)',
-              notfound: '#ff006e',
-            };
-
-            return (
-              <motion.div
-                key={index}
-                className="flex flex-col items-center gap-1 flex-1"
-                style={{ maxWidth: 40 }}
-              >
-                {getPointerLabel(index) && (
-                  <motion.span
-                    className="text-[9px] font-mono font-bold px-1 py-0.5 rounded mb-1"
-                    style={{
-                      color: getPointerLabel(index) === 'mid' ? '#00d4ff' : getPointerLabel(index) === 'low' ? '#00ff88' : '#ff006e',
-                      background: getPointerLabel(index) === 'mid' ? 'rgba(0,212,255,0.15)' : getPointerLabel(index) === 'low' ? 'rgba(0,255,136,0.15)' : 'rgba(255,0,110,0.15)',
-                    }}
-                    initial={{ y: -5, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                  >
-                    {getPointerLabel(index)}
-                  </motion.span>
-                )}
-
-                <motion.div
-                  className="w-full rounded-t-md relative cursor-pointer"
-                  style={{
-                    background: barColors[state] || barColors.unvisited,
-                    boxShadow: state === 'visiting' ? '0 0 15px rgba(0,212,255,0.5)' : state === 'found' ? '0 0 20px rgba(0,255,136,0.5)' : 'none',
-                    minHeight: 4,
-                  }}
-                  animate={{
-                    height: `${heightPercent * 1.8}px`,
-                    scale: state === 'visiting' ? [1, 1.05, 1] : 1,
-                  }}
-                  transition={{
-                    height: { duration: 0.3 },
-                    scale: { duration: 0.6, repeat: state === 'visiting' ? Infinity : 0 },
-                  }}
-                  title={`Index: ${index}, Value: ${value}`}
-                />
-
-                <span
-                  className="text-[10px] font-mono font-medium"
-                  style={{
-                    color: state === 'visiting' ? '#00d4ff' : state === 'found' ? '#00ff88' : state === 'visited' ? '#a855f7' : '#64748b',
-                  }}
-                >
-                  {value}
-                </span>
-
-                <span className="text-[8px] font-mono" style={{ color: '#374151' }}>
-                  {index}
-                </span>
-              </motion.div>
-            );
-          })}
-        </div>
-        <div className="flex items-center justify-center gap-1 flex-wrap">
-          {arrayData.map((value, index) => (
-            <Node
-              key={index}
-              value={value}
-              index={index}
-              state={getArrayNodeState(index)}
-              type="array"
-              size={nodeSize}
-              pointerLabel={getPointerLabel(index)}
-            />
-          ))}
-        </div>
-      </motion.div>
-    );
-  }
-
-  return (
-    <motion.div
-      className="flex items-center justify-center h-full"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <div className="text-center">
-        <span className="text-4xl mb-4 block">🎯</span>
-        <p style={{ color: '#64748b' }} className="text-sm">
-          Select an algorithm and generate data to begin
-        </p>
-      </div>
-    </motion.div>
-  );
-}
+import { useMemo, memo } from 'react';import { motion } from 'framer-motion';import Node from './Node';const CELL_COLORS = {  unvisited: { bg: 'rgba(55,65,81,0.45)', border: 'rgba(255,255,255,0.06)' },  visiting:  { bg: 'rgba(0,212,255,0.55)', border: '#00d4ff', glow: '0 0 8px rgba(0,212,255,0.7)' },  visited:   { bg: 'rgba(168,85,247,0.4)', border: 'rgba(168,85,247,0.6)', glow: '0 0 4px rgba(168,85,247,0.3)' },  found:     { bg: 'rgba(0,255,136,0.6)',  border: '#00ff88', glow: '0 0 10px rgba(0,255,136,0.7)' },  path:      { bg: 'rgba(0,255,136,0.45)', border: 'rgba(0,255,136,0.7)', glow: '0 0 6px rgba(0,255,136,0.5)' },  wall:      { bg: 'rgba(15,15,22,0.95)',  border: 'rgba(255,255,255,0.04)' },  start:     { bg: 'rgba(0,212,255,0.5)',  border: '#00d4ff', glow: '0 0 10px rgba(0,212,255,0.5)', icon: '▶' },  end:       { bg: 'rgba(255,0,110,0.5)',  border: '#ff006e', glow: '0 0 10px rgba(255,0,110,0.5)', icon: '◆' },  enqueue:   { bg: 'rgba(0,212,255,0.2)',  border: 'rgba(0,212,255,0.3)' },};const GridCell = memo(function GridCell({ state, size, onClick, title }) {  const c = CELL_COLORS[state] || CELL_COLORS.unvisited;  return (    <div      onClick={onClick}      title={title}      style={{        width: size, height: size,        borderRadius: 3,        background: c.bg,        border: `1px solid ${c.border}`,        boxShadow: c.glow || 'none',        cursor: onClick ? 'pointer' : 'default',        display: 'flex', alignItems: 'center', justifyContent: 'center',        fontSize: size > 16 ? 10 : 7,        color: '#fff',        transition: 'background 0.12s, box-shadow 0.12s',        flexShrink: 0,      }}    >      {c.icon || null}    </div>  );});export default function Grid({  algorithm,  arrayData,  gridData,  visitedIndices,  visitedCells,  pathCells,  foundIndex,  currentStep,  isComplete,  startPos,  endPos,  onCellClick,}) {  const isGraphAlgo = algorithm === 'dfs' || algorithm === 'bfs';  const nodeSize = useMemo(() => {    if (isGraphAlgo) {      const cols = gridData?.[0]?.length || 0;      if (cols > 35) return 'xs';      if (cols > 25) return 'sm';      return 'md';    }    const len = arrayData?.length || 0;    if (len > 30) return 'sm';    if (len > 20) return 'md';    return 'lg';  }, [isGraphAlgo, arrayData?.length, gridData]);  const getArrayNodeState = (index) => {    if (isComplete && currentStep?.type === 'not_found') return 'notfound';    if (foundIndex === index) return 'found';    if (currentStep?.index === index && !isComplete) return 'visiting';    if (currentStep?.type === 'range' && currentStep?.range) {      const [low, high] = currentStep.range;      if (index >= low && index <= high && visitedIndices.has(index)) return 'visited';      if (index >= low && index <= high) return 'range';    }    if (visitedIndices.has(index)) return 'visited';    return 'unvisited';  };  const getPointerLabel = (index) => {    if (algorithm !== 'binary' || !currentStep?.indices) return null;    const { left, right, mid } = currentStep.indices;    if (index === mid)   return 'mid';    if (index === left)  return 'L';    if (index === right) return 'R';    return null;  };  const getGraphNodeState = (row, col) => {    const key = `${row}-${col}`;    if (gridData[row][col] === 1) return 'wall';    if (row === startPos?.[0] && col === startPos?.[1]) {      if (pathCells.has(key)) return 'path';      if (visitedCells.has(key)) return 'visited';      return 'start';    }    if (row === endPos?.[0] && col === endPos?.[1]) {      if (foundIndex === key) return 'found';      return 'end';    }    if (pathCells.has(key)) return 'path';    if (foundIndex === key) return 'found';    if (currentStep?.row === row && currentStep?.col === col && currentStep?.type === 'visit') return 'visiting';    if (visitedCells.has(key)) return 'visited';    return 'unvisited';  };  if (isGraphAlgo && gridData) {    const rows = gridData.length;    const cols = gridData[0]?.length || 1;    const cellPx = Math.max(12, Math.min(      Math.floor((window.innerWidth  * 0.56 - 32) / cols) - 2,      Math.floor((window.innerHeight * 0.70 - 32) / rows) - 2,      28    ));    return (      <div        style={{          display: 'flex', flexDirection: 'column',          alignItems: 'center', justifyContent: 'center',          gap: 2, padding: 16, width: '100%', height: '100%',        }}      >        {gridData.map((row, rowIdx) => (          <div key={rowIdx} style={{ display: 'flex', gap: 2 }}>            {row.map((_, colIdx) => (              <GridCell                key={`${rowIdx}-${colIdx}`}                state={getGraphNodeState(rowIdx, colIdx)}                size={cellPx}                onClick={() => onCellClick?.(rowIdx, colIdx)}                title={`(${rowIdx},${colIdx})`}              />            ))}          </div>        ))}      </div>    );  }  if (arrayData) {    const maxVal = Math.max(...arrayData, 1);    return (      <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:24, padding:16, width:'100%' }}>        {}        <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'center', gap:3, width:'100%', minHeight:200, paddingInline:16 }}>          {arrayData.map((value, index) => {            const state = getArrayNodeState(index);            const heightPx = Math.max(4, (value / maxVal) * 180);            const label = getPointerLabel(index);            const barColors = {              unvisited: 'rgba(100,116,139,0.4)',              visiting:  '#00d4ff',              visited:   '#a855f7',              found:     '#00ff88',              range:     'rgba(255,215,0,0.4)',              notfound:  '#ff006e',            };            const labelColor = label === 'mid' ? '#00d4ff' : label === 'L' ? '#00ff88' : '#ff006e';            return (              <div                key={index}                style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:3, flex:1, maxWidth:40 }}              >                {label && (                  <span style={{                    fontSize:8, fontFamily:'monospace', fontWeight:700, padding:'1px 4px', borderRadius:3,                    color: labelColor, background:`${labelColor}22`, border:`1px solid ${labelColor}44`,                  }}>{label}</span>                )}                <div                  style={{                    width:'100%', borderRadius:'3px 3px 0 0',                    background: barColors[state] || barColors.unvisited,                    height: heightPx,                    boxShadow: state === 'visiting' ? '0 0 15px rgba(0,212,255,0.5)' : state === 'found' ? '0 0 20px rgba(0,255,136,0.5)' : 'none',                    transition: 'background 0.2s, height 0.25s',                  }}                  title={`idx:${index} val:${value}`}                />                <span style={{ fontSize:10, fontFamily:'monospace', color: state==='visiting'?'#00d4ff':state==='found'?'#00ff88':state==='visited'?'#a855f7':'#64748b' }}>                  {value}                </span>                <span style={{ fontSize:8, fontFamily:'monospace', color:'#374151' }}>{index}</span>              </div>            );          })}        </div>      </div>    );  }  return (    <motion.div      className="flex items-center justify-center h-full"      initial={{ opacity: 0 }}      animate={{ opacity: 1 }}    >      <div className="text-center">        <span className="text-4xl mb-4 block"></span>        <p style={{ color: '#64748b' }} className="text-sm">          Select an algorithm and generate data to begin        </p>      </div>    </motion.div>  );}
